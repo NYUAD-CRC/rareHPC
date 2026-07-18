@@ -1,4 +1,4 @@
-name: riskHPC2
+name: riskHPC
 channels:
   - conda-forge
   - defaults
