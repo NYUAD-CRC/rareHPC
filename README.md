@@ -56,7 +56,9 @@ riskHPC/
 ├── environment.yml
 ├── requirements.txt
 ├── download_models.py
-├── test.py
+├── test.py                           # script used to test the trained models on test data
+├── train.py                          # script used to train the machine learning models
+├── DataPreprocess.ipynb              # jupyternotebook used to clean the data and curate features
 ├── ComputeTimewithSampling/          # Model files and Results for compute time utilisation
 ├── MEMwithsampling/                  # Model files and Results for memory utilisation
 ├── classification_model/             # Model files Results for High/Low compute time utilisation
