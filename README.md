@@ -21,7 +21,7 @@
 3. Activate the environment:
 
    ```bash
-   conda activate riskHPC
+   conda activate rareHPC
    ```
 
 4. Install the required pip dependencies:
