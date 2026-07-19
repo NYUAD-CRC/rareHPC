@@ -10,6 +10,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 def classification_model(df_modelling, dump_path):
+    """
+    Function to load the classification model and predict the compute utilization category (High/Low) for the given dataframe.
+    It also calculates and prints the recall, precision, and accuracy of the model on the test data, and saves the confusion matrix plot."""
+    
     dump_path = os.path.join(dump_path, 'classification_model')
     
     df_model_sel = df_modelling[['id_job', 'id_user', 'id_assoc', 'id_qos', 'id_group', 'constraints', 'partition', 'account', 'job_name', 'wait_time', 
@@ -66,6 +70,11 @@ def bucketing(x):
         return '>50'
 
 def get_pr(df, y, path):
+    
+    """
+    Function to calculate precision, recall, and F1 score for each category of the target variable and plot them as a grouped bar chart.
+    """
+    
     if y=='memory_efficiency_%':
         suffix='memory'
     else:
@@ -98,6 +107,11 @@ def get_pr(df, y, path):
     return 
 
 def get_cfm(df_test,y, path):
+    
+    """
+    Function to calculate and plot the confusion matrix for the classification results.
+    """
+    
     if y=='memory_efficiency_%':
         suffix='memory'
     else:
@@ -131,6 +145,9 @@ def get_cfm(df_test,y, path):
     return
 
 def plot_clean2(df_plot, labelx, title, labely, save_path, topk1=15, topk2=10):
+    """
+    Function to plot a grouped bar chart showing total savings and percentage savings for a given label.
+    """
     
     df_plot[labely+'_total_text'] = df_plot[labely+'_total'].apply(lambda x:round(x,2))
     df_plot[labely+'_percent_text'] = df_plot[labely+'_percentage'].apply(lambda x:str(round(x,2))+' %')
@@ -185,6 +202,10 @@ def plot_clean2(df_plot, labelx, title, labely, save_path, topk1=15, topk2=10):
     return
 
 def merge_total_percentage(df, labelx, title, labely, save_path):
+    """
+    Function to merge total savings and percentage savings for a given label and plot them as a grouped bar chart.
+    """
+    
     t1 = df.groupby(labelx)[labely].sum()
     t1 = pd.DataFrame(t1)
     t1[labelx]=t1.index.to_list()
@@ -213,6 +234,10 @@ def merge_total_percentage(df, labelx, title, labely, save_path):
     plot_clean2(merged_df, labelx, title, labely, save_path)
 
 def test(df_data, dump_path, y, experiment_suffix):
+    """
+    Function to test the classification model, regression model for the specified target variable and evaluate their performance.
+    """
+    
     user_freq = dict(df_data.groupby('id_user')['id_job'].count())
     df_data['user_count'] = df_data['id_user'].apply(lambda x:user_freq[x])
     df_data = df_data[df_data['user_count']>199]
@@ -273,13 +298,11 @@ def test(df_data, dump_path, y, experiment_suffix):
     
     
     if ybucket=='actual_bucket_computetime':
-        # plot_clean(df_data, labelx = 'account', title='Compute Time (hrs) improvement by account', labely='improve_computetime_hrs')
         merge_total_percentage(df_data, 'account', 'Compute Time (hrs) improvement by account', 'improved_computetime_hrs', dump_path+'/TIMEsavings_'+experiment_suffix+'_test.png')
         merge_total_percentage(df_data, 'account', 'Compute Time (hrs) improvement by account', 'improved_computetime_hrs_1bucket', dump_path+'/TIMEsavings1bktup_'+experiment_suffix+'_test.png')
         img1 = plt.imread(dump_path+'/TIMEsavings_'+experiment_suffix+'_test.png')
         img2 = plt.imread(dump_path+'/TIMEsavings1bktup_'+experiment_suffix+'_test.png')
     else:
-        # plot_clean(df_data, labelx = 'account', title='Memory (gb) savings by account', labely='savings_memory_gb')
         merge_total_percentage(df_data, 'account', 'Memory (gb) savings by account', 'savings_memory_gb', dump_path+'/MEMsavings_'+experiment_suffix+'_test.png')
         merge_total_percentage(df_data, 'account', 'Memory (gb) savings by account', 'savings_memory_gb_1bucket', dump_path+'/MEMsavings1bktup_'+experiment_suffix+'_test.png')
         print('path to the savings plot', dump_path+'/MEMsavings_'+experiment_suffix+'_test.png')
